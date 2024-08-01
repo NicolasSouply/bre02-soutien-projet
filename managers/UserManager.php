@@ -11,7 +11,7 @@ class UserManager extends AbstractManager {
     {
         $query = $this->db->prepare(
             "INSERT INTO users (
-                id,
+                NULL,
                 email,
                 password,
                 role
@@ -26,7 +26,6 @@ class UserManager extends AbstractManager {
         $parameters = [
             
             'email' => $user->getEmail(),
- 
             'password' => $user->getPassword(),
             'role' => $user->getRole()
         ];
@@ -70,4 +69,31 @@ public function findUserByEmail(string $email): ?Users
         return null;
     }
 }
+public function findAllUsers(): array
+{
+    $query = $this->db->prepare
+    (
+    "SELECT *
+    FROM users"
+    );
+
+$query->execute(); 
+
+$usersData = $query->fetchAll(PDO::FETCH_ASSOC);
+        $users = [];
+
+        foreach ($usersData as $userData) {
+            if (isset($userData["id"], $userData["email"], $userData["password"], $userData["role"])) {
+                $user = new Users($userData["email"], $userData["password"], $userData["role"]);
+                $user->setId($userData["id"]);
+                $users[] = $user;
+            }
+        }
+
+        return $users;
+    }
+
+
+public function findUserById(int $id) : Users 
+
 }

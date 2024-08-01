@@ -15,9 +15,8 @@ class AuthController extends AbstractController {
        
         $this->render('front/register.html.twig', []);
     }
-    public function login() : void {
-        $this->render('front/login.html.twig',[]);
-}
+
+
     public function checkRegister() : void {
 
         if (!isset($_POST['email'], $_POST['password'], $_POST['confirm_password'], $_POST['csrf_token'])) {
@@ -58,10 +57,18 @@ class AuthController extends AbstractController {
    
         $this->redirect('connexion');
     }
+
+
+    
+    public function login() : void {
+        $this->render('front/login.html.twig',[]);
+    }
+
+
     public function checkLogin() : void {
 
         if (!isset($_POST['email'], $_POST['password'], $_POST['csrf_token'])) {
-            $this->redirectWithError('login.php', 'Tous les champs sont obligatoires.');
+            $this->redirectWithError('index.php?route=connexion', 'Tous les champs sont obligatoires.');
             return;
         }
     
@@ -71,31 +78,33 @@ class AuthController extends AbstractController {
     
 
         if (!$this->csrfTokenManager->validateCSRFToken($csrfToken)) {
-            $this->redirectWithError('login.php', 'Le token CSRF est invalide.');
+            $this->redirectWithError('index.php?route=connexion', 'Le token CSRF est invalide.');
             return;
         }
     
 
         $user = $this->um->findUserByEmail($email);
         if (!$user) {
-            $this->redirectWithError('login.php', 'Aucun compte trouvé avec cet email.');
+            $this->redirectWithError('index.php?route=connexion', 'Aucun compte trouvé avec cet email.');
             return;
         }
     
 
         if (!password_verify($password, $user->getPassword())) {
-            $this->redirectWithError('login.php', 'Le mot de passe est incorrect.');
+            $this->redirectWithError('index.php?route=connexion', 'Le mot de passe est incorrect.');
             return;
         }
     
 
-        session_start();
-        $_SESSION['user_id'] = $user->getId();
-        $_SESSION['user_role'] = $user->getRole();
+    
+        $_SESSION['user'] = $user->getId();
+        $_SESSION['role'] = $user->getRole();
     
 
-        $this->redirect('index.php');
+        $this->redirect('home');
     }
+
+    
     public function logout() : void {
         // Détruire la session
         session_start();
