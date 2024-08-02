@@ -57,17 +57,28 @@ class UserController extends AbstractController
 
    
 
-    public function edit() : void {
-        $this->render("admin/users/edit.html.twig", []);
+    public function edit(int $id) : void {
+        $user = $this->um->findUserById($id);
+    
+        if ($user !== null) {
+            $this->render("admin/users/edit.html.twig", ['user' => $user]);
+        } else {
+            header('Location: /admin/users/list');
+            exit;
+        }
     }
 
     public function checkEdit() : void {
 
     }
 
-    public function delete() : void {
+    public function delete(int $id) : void {
+        $user = $this->um->findUserById($id);
 
+        header('Location: /admin/users/list');
+        exit;
     }
+    
 
     public function list() : void {
         // Je récupère tous les users
@@ -75,8 +86,16 @@ class UserController extends AbstractController
         $this->render("admin/users/list.html.twig", ['users' => $users]);
     }
 
-    public function show() : void {
-        $this->render("admin/users/show.html.twig", []);
+    public function show(int $id) : void {
+        $user = $this->um->findUserByEmail($id);
+
+        if ($user !== null ) {
+            $this->render("admin/users/show.html.twig", ['user' => $user]);
+        } else {
+            header('location: /admin/users.list');
+            exit;
+        }
+        
     }
     private function redirectWithError(string $url, string $errorMessage) : void {
         // Stocker le message d'erreur dans la session pour l'afficher après la redirection

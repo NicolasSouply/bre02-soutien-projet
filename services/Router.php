@@ -61,7 +61,9 @@ class Router {
 
         } elseif ($route === 'admin-edit-user') {
             $this->checkAdminAccess();
-            $this->uc->edit();
+            if(isset($_GET['user_id']))
+                $userId = intval($_GET['user_id']);
+            $this->uc->edit($userId);
             echo "Je dois afficher le formulaire de modification d'utilisateur admin";
 
         } elseif ($route === 'admin-check-edit-user') {
@@ -71,9 +73,14 @@ class Router {
 
         } elseif ($route === 'admin-delete-user') {
             $this->checkAdminAccess();
-            $this->uc->delete();
-            echo "Je dois traiter la suppression d'utilisateur admin";
-
+            if (isset($_GET['user_id'])) {
+                $userId = intval($_GET['user_id']);
+                $this->uc->delete($userId);
+                echo "Je dois traiter la suppression d'utilisateur admin";
+            } else {
+                header('Location: /admin/users/list');
+                exit;
+            }
         } elseif ($route === 'admin-list-users') {
             $this->checkAdminAccess();
             $this->uc->list();
@@ -81,7 +88,9 @@ class Router {
 
         } elseif ($route === 'admin-show-user') {
             $this->checkAdminAccess();
-            $this->uc->show();
+                if(isset($_GET['user_id']))
+                $userId = intval($_GET['user_id']);
+            $this->uc->show($userId);
             echo "Je dois afficher les détails d'un utilisateur admin";
 
 
